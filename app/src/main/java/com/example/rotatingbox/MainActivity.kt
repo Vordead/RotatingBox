@@ -64,13 +64,13 @@ class MainActivity : ComponentActivity() {
                     val time = measureTimeMillis {
                         withContext(Dispatchers.Default) {
                             val bitmap = selectedImageUri?.let { BitmapUtil.uriToBitmap(context, it) }
-                            val selectedColor = bitmap?.let { BitmapUtil.findDominantColor(it) }
+                            val selectedColor = bitmap?.let { BitmapUtil.findDominantColorParallelism(it) }
                             if (selectedColor != null) {
                                 selectedBackgroundColor = selectedColor
                             }
                         }
                     }
-                    Log.d("timeTaken","$time")
+                    Log.d("bitMap","Time Taken:$time")
 
                 }
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
