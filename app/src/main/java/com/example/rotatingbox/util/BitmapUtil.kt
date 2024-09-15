@@ -18,7 +18,7 @@ object BitmapUtil {
 
     //Step 1
     fun findDominantColorHashMap(bitmap: Bitmap, useDownscaling: Boolean = false): Color {
-        val scaledBitmap = if(useDownscaling) Bitmap.createScaledBitmap(bitmap, 128, 128, false) else bitmap
+        val scaledBitmap = if(useDownscaling) Bitmap.createScaledBitmap(bitmap, bitmap.width/4, bitmap.height/4, false) else bitmap
 
         val colorCountMap = mutableMapOf<Int, Int>()
 
@@ -43,7 +43,7 @@ object BitmapUtil {
 
     //Step 2
     fun findDominantColorHashMapPretty(bitmap: Bitmap, useDownscaling : Boolean = false): Color {
-        val scaledBitmap = if(useDownscaling) Bitmap.createScaledBitmap(bitmap, 128, 128, false) else bitmap
+        val scaledBitmap = if(useDownscaling) Bitmap.createScaledBitmap(bitmap, bitmap.width/4, bitmap.height/4, false) else bitmap
         val colorCountMap = HashMap<Int, Int>()
         for (x in 0 until scaledBitmap.width) {
             for (y in 0 until scaledBitmap.height) {
@@ -57,7 +57,7 @@ object BitmapUtil {
 
     //Step 3
     fun findDominantColorSparseIntArray(bitmap: Bitmap, useDownscaling: Boolean = false): Color {
-        val scaledBitmap = if(useDownscaling) Bitmap.createScaledBitmap(bitmap, 128, 128, false) else bitmap
+        val scaledBitmap = if(useDownscaling) Bitmap.createScaledBitmap(bitmap, bitmap.width/4, bitmap.height/4, false) else bitmap
 
         val colorCountMap = SparseIntArray()
 
@@ -89,7 +89,7 @@ object BitmapUtil {
      * @return The dominant color as a Color object.
      */
     fun findDominantColorSparseIntArrayPretty(bitmap: Bitmap, useDownscaling: Boolean = false): Color {
-        val scaledBitmap = if(useDownscaling) Bitmap.createScaledBitmap(bitmap, 128, 128, false) else bitmap
+        val scaledBitmap = if(useDownscaling) Bitmap.createScaledBitmap(bitmap, bitmap.width/4, bitmap.height/4, false) else bitmap
         val colorFrequencyMap = SparseIntArray()
         var dominantColor = 0
         var maxCount = 0
@@ -111,7 +111,7 @@ object BitmapUtil {
 
     //Step 5
      suspend fun findDominantColorParallelism(bitmap: Bitmap, useDownscaling: Boolean = false): Color = withContext(Dispatchers.Default) {
-        val scaledBitmap = if(useDownscaling) Bitmap.createScaledBitmap(bitmap, 128, 128, false) else bitmap
+        val scaledBitmap = if(useDownscaling) Bitmap.createScaledBitmap(bitmap, bitmap.width/4, bitmap.height/4, false) else bitmap
         val colorCountMap = ConcurrentHashMap<Int, Int>()
         val cores = Runtime.getRuntime().availableProcessors()
         val chunkSize = scaledBitmap.height / cores

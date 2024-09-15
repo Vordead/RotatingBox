@@ -8,6 +8,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.example.rotatingbox.util.BitmapUtil
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -18,7 +20,7 @@ import java.util.logging.SimpleFormatter
 import kotlin.system.measureTimeMillis
 
 @RunWith(AndroidJUnit4::class)
-class BitmapUtilTest1 {
+class BitmapUtilTest {
 
     private val logger = Logger.getLogger("BitmapUtilTest")
 
@@ -40,23 +42,14 @@ class BitmapUtilTest1 {
 
         val functions = listOf(
             "findDominantColorHashMap" to { bitmap: Bitmap, downscale: Boolean ->
-                BitmapUtil.findDominantColorHashMap(
-                    bitmap,
-                    downscale
-                )
+                BitmapUtil.findDominantColorHashMap(bitmap, downscale)
             },
             "findDominantColorSparseIntArray" to { bitmap: Bitmap, downscale: Boolean ->
-                BitmapUtil.findDominantColorSparseIntArray(
-                    bitmap,
-                    downscale
-                )
+                BitmapUtil.findDominantColorSparseIntArray(bitmap, downscale)
             },
             "findDominantColorParallelism" to { bitmap: Bitmap, downscale: Boolean ->
-                launch {
-                    BitmapUtil.findDominantColorParallelism(
-                        bitmap,
-                        downscale
-                    )
+                runBlocking {
+                    BitmapUtil.findDominantColorParallelism(bitmap, downscale)
                 }
             }
         )
@@ -82,7 +75,6 @@ class BitmapUtilTest1 {
                 val averageTime = times.average()
                 val logMessage = "${testCase.description} - $name: Average time: $averageTime ms"
                 logger.info(logMessage)
-//                println(logMessage)
             }
         }
     }
