@@ -7,6 +7,8 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.example.rotatingbox.util.BitmapUtil
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
@@ -17,7 +19,6 @@ import kotlin.system.measureTimeMillis
 
 @RunWith(AndroidJUnit4::class)
 class BitmapUtilTest1 {
-
 
     private val logger = Logger.getLogger("BitmapUtilTest")
 
@@ -33,9 +34,32 @@ class BitmapUtilTest1 {
     }
 
     @Test
-    fun testFindDominantColor() : Unit{
+    fun testFindDominantColor() = runTest {
         val smallBitmap = Bitmap.createBitmap(16, 16, Bitmap.Config.ARGB_8888)
         val largeBitmap = Bitmap.createBitmap(1024, 1024, Bitmap.Config.ARGB_8888)
+
+        val functions = listOf(
+            "findDominantColorHashMap" to { bitmap: Bitmap, downscale: Boolean ->
+                BitmapUtil.findDominantColorHashMap(
+                    bitmap,
+                    downscale
+                )
+            },
+            "findDominantColorSparseIntArray" to { bitmap: Bitmap, downscale: Boolean ->
+                BitmapUtil.findDominantColorSparseIntArray(
+                    bitmap,
+                    downscale
+                )
+            },
+            "findDominantColorParallelism" to { bitmap: Bitmap, downscale: Boolean ->
+                launch {
+                    BitmapUtil.findDominantColorParallelism(
+                        bitmap,
+                        downscale
+                    )
+                }
+            }
+        )
 
         val testCases = listOf(
             TestCase(smallBitmap, true, "Small Bitmap (Downscaled)"),
@@ -45,21 +69,21 @@ class BitmapUtilTest1 {
         )
 
         for (testCase in testCases) {
-            val (bitmap, downscale, description) = testCase
-            val times = mutableListOf<Long>()
+            for ((name, function) in functions) {
+                val times = mutableListOf<Long>()
 
-            repeat(10) { // Run each test case 10 times
-                val time = measureTimeMillis {
-                    BitmapUtil.findDominantColorHashMap(bitmap, downscale)
+                repeat(10) { // Run each test case 10 times
+                    val time = measureTimeMillis {
+                        function(testCase.bitmap, testCase.downscale)
+                    }
+                    times.add(time)
                 }
-                times.add(time)
+
+                val averageTime = times.average()
+                val logMessage = "${testCase.description} - $name: Average time: $averageTime ms"
+                logger.info(logMessage)
+//                println(logMessage)
             }
-
-            val averageTime = times.average()
-
-            val logMessage = "$description - Average time: $averageTime ms, Dominant Color: }"
-            logger.info(logMessage)
-            println(logMessage)
         }
     }
 
